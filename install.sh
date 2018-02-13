@@ -44,7 +44,7 @@ Make sure the key-based SSH login for your normal user is working!
 "
 
 # ADD ARGS for automated setup
-if [ "$#" -ne 3 -a  "$#" -gt 0 ]; then    
+if [ "$#" -ne 3 -a  "$#" -gt 0 ]; then
 	echo "## Please add the following three arguments for a one shot install:"
     echo "         Username, which edition to install (number), a webpassword"
     echo "## invoke: $0 myusername <1|2|3|4> myWebPassw0rd"
@@ -83,7 +83,7 @@ if [ "$#" -eq 3 ]; then
         echo "## User: $myusergiven"
         echo "## Edition: $myeditiongiven"
         echo "## Webpassword: $mypasswordgiven"
-        echo "## Let's see if that works..." 
+        echo "## Let's see if that works..."
         noninteractive=1
 fi
 
@@ -100,7 +100,7 @@ if [ -z ${noninteractive+x} ]; then
 	read myuser
 else
 	myuser=$myusergiven
-fi 
+fi
 
 
 # Make sure all the necessary prerequisites are met.
@@ -200,7 +200,7 @@ if [ -z ${noninteractive+x} ]; then
 	echo ""
 	echo -n "Your choice: "
 	read choice
-else 
+else
 	choice=$myeditiongiven
 fi
 
@@ -245,7 +245,7 @@ apt-get upgrade -y
 
 # Install packages needed
 
-apt-get install apache2-utils apparmor apt-transport-https aufs-tools bash-completion build-essential ca-certificates cgroupfs-mount curl dialog dnsutils docker.io docker-compose dstat ethtool genisoimage git glances html2text htop iptables iw jq libcrack2 libltdl7 libnginx-mod-http-headers-more-filter lm-sensors man nginx-extras nodejs npm ntp openssh-server openssl prips syslinux psmisc pv python-pip unzip vim -y 
+apt-get install apache2-utils apparmor apt-transport-https aufs-tools bash-completion build-essential ca-certificates cgroupfs-mount curl dialog dnsutils docker.io docker-compose dstat ethtool genisoimage git glances html2text htop iptables iw jq libcrack2 libltdl7 libnginx-mod-http-headers-more-filter lm-sensors man nginx-extras nodejs npm ntp openssh-server openssl prips syslinux psmisc pv python-pip unzip vim -y
 
 # Let's clean up apt
 apt-get autoclean -y
@@ -253,9 +253,9 @@ apt-get autoremove -y
 
 # Let's remove NGINX default website
 fuECHO "### Removing NGINX default website."
-[ -e /etc/nginx/sites-enabled ] && rm /etc/nginx/sites-enabled/default  
-[ -e /etc/nginx/sites-avaliable ] && rm /etc/nginx/sites-available/default  
-[ -e /usr/share/nginx/html/index.html ] && rm /usr/share/nginx/html/index.html  
+[ -e /etc/nginx/sites-enabled ] && rm /etc/nginx/sites-enabled/default
+[ -e /etc/nginx/sites-avaliable ] && rm /etc/nginx/sites-available/default
+[ -e /usr/share/nginx/html/index.html ] && rm /usr/share/nginx/html/index.html
 
 if [ -z ${noninteractive+x} ]; then
 	# Let's ask user for a password for the web user
@@ -264,7 +264,7 @@ if [ -z ${noninteractive+x} ]; then
 	fuECHO "### Please enter a password for your user $myuser for web access."
 	myPASS1="pass1"
 	myPASS2="pass2"
-	while [ "$myPASS1" != "$myPASS2"  ] 
+	while [ "$myPASS1" != "$myPASS2"  ]
 	  do
 		while [ "$myPASS1" == "pass1"  ] || [ "$myPASS1" == "" ]
 		  do
@@ -280,11 +280,11 @@ if [ -z ${noninteractive+x} ]; then
 			myPASS2="pass2"
 		fi
 	  done
-else 
+else
 	myUSER=$myusergiven
 	myPASS1=$mypasswordgiven
 fi
-htpasswd -b -c /etc/nginx/nginxpasswd $myUSER $myPASS1 
+htpasswd -b -c /etc/nginx/nginxpasswd $myUSER $myPASS1
 fuECHO
 
 # Let's modify the sources list
@@ -299,22 +299,22 @@ EOF
 # Let's generate a SSL certificate
 fuECHO "### Generating a self-signed-certificate for NGINX."
 fuECHO "### If you are unsure you can use the default values."
-mkdir -p /etc/nginx/ssl 
+mkdir -p /etc/nginx/ssl
 openssl req -nodes -x509 -sha512 -newkey rsa:8192 -keyout "/etc/nginx/ssl/nginx.key" -out "/etc/nginx/ssl/nginx.crt" -days 3650  -subj '/C=AU/ST=Some-State/O=Internet Widgits Pty Ltd'
 
 # Installing docker-compose, wetty, ctop, elasticdump, tpot
 pip install --upgrade pip
 #fuECHO "### Installing docker-compose."
-#pip install docker-compose==1.16.1 
+#pip install docker-compose==1.16.1
 fuECHO "### Installing elasticsearch curator."
 pip install elasticsearch-curator==5.4.1
 fuECHO "### Installing wetty."
-[ ! -e /usr/bin/node ] && ln -s /usr/bin/nodejs /usr/bin/node 
-npm install https://github.com/t3chn0m4g3/wetty -g 
+[ ! -e /usr/bin/node ] && ln -s /usr/bin/nodejs /usr/bin/node
+npm install https://github.com/t3chn0m4g3/wetty -g
 fuECHO "### Installing elasticsearch-dump."
-npm install https://github.com/t3chn0m4g3/elasticsearch-dump -g 
+npm install https://github.com/taskrabbit/elasticsearch-dump#ac9f62a -g
 fuECHO "### Installing ctop."
-wget https://github.com/bcicen/ctop/releases/download/v0.6.1/ctop-0.6.1-linux-amd64 -O ctop 
+wget https://github.com/bcicen/ctop/releases/download/v0.7/ctop-0.7-linux-amd64 -O ctop 
 mv ctop /usr/bin/
 chmod +x /usr/bin/ctop
 fuECHO "### Cloning T-Pot."
@@ -330,8 +330,8 @@ adduser --system --no-create-home --uid 2000 --disabled-password --disabled-logi
 a=$(fuRANDOMWORD /opt/tpot/host/usr/share/dict/a.txt)
 n=$(fuRANDOMWORD /opt/tpot/host/usr/share/dict/n.txt)
 myHOST=$a$n
-hostnamectl set-hostname $myHOST 
-sed -i 's#127.0.1.1.*#127.0.1.1\t'"$myHOST"'#g' /etc/hosts 
+hostnamectl set-hostname $myHOST
+sed -i 's#127.0.1.1.*#127.0.1.1\t'"$myHOST"'#g' /etc/hosts
 
 
 # Let's patch sshd_config
@@ -354,7 +354,7 @@ mkdir -p /data/
 case $mode in
   HP)
     echo "### Preparing HONEYPOT flavor installation."
-    cp /opt/tpot/etc/compose/hp.yml $myTPOTCOMPOSE 
+    cp /opt/tpot/etc/compose/hp.yml $myTPOTCOMPOSE
   ;;
   INDUSTRIAL)
     echo "### Preparing INDUSTRIAL flavor installation."
@@ -376,10 +376,10 @@ myIMAGESCOUNT=$(cat $myTPOTCOMPOSE | grep -v '#' | grep image | cut -d: -f2 | wc
 j=0
 for name in $(cat $myTPOTCOMPOSE | grep -v '#' | grep image | cut -d'"' -f2)
   do
-    docker pull $name 
+    docker pull $name
     let j+=1
   done
-  
+
 # Let's add the daily update check with a weekly clean interval
 fuECHO "### Modifying update checks."
 tee /etc/apt/apt.conf.d/10periodic <<EOF
@@ -434,17 +434,17 @@ mkdir -p /data/conpot/log \
          /data/suricata/log /home/$myuser/.ssh/ \
          /data/p0f/log \
          /data/vnclowpot/log
-touch /data/spiderfoot/spiderfoot.db 
+touch /data/spiderfoot/spiderfoot.db
 
 # Let's copy some files
-tar xvfz /opt/tpot/etc/objects/elkbase.tgz -C / 
-cp    /opt/tpot/host/etc/systemd/* /etc/systemd/system/ 
-cp    /opt/tpot/host/etc/issue /etc/ 
-cp -R /opt/tpot/host/etc/nginx/ssl /etc/nginx/ 
+tar xvfz /opt/tpot/etc/objects/elkbase.tgz -C /
+cp    /opt/tpot/host/etc/systemd/* /etc/systemd/system/
+cp    /opt/tpot/host/etc/issue /etc/
+cp -R /opt/tpot/host/etc/nginx/ssl /etc/nginx/
 cp    /opt/tpot/host/etc/nginx/tpotweb.conf /etc/nginx/sites-available/
-cp    /opt/tpot/host/etc/nginx/nginx.conf /etc/nginx/nginx.conf 
-cp    /opt/tpot/host/usr/share/nginx/html/* /usr/share/nginx/html/ 
-systemctl enable tpot 
+cp    /opt/tpot/host/etc/nginx/nginx.conf /etc/nginx/nginx.conf
+cp    /opt/tpot/host/usr/share/nginx/html/* /usr/share/nginx/html/
+systemctl enable tpot
 systemctl enable wetty
 
 # patch wetty config
@@ -455,13 +455,13 @@ sed -e 's:tsec:'$myuser':g' -i /usr/share/nginx/html/navbar.html
 
 
 # Let's enable T-Pot website
-ln -s /etc/nginx/sites-available/tpotweb.conf /etc/nginx/sites-enabled/tpotweb.conf 
+ln -s /etc/nginx/sites-available/tpotweb.conf /etc/nginx/sites-enabled/tpotweb.conf
 
 # Let's take care of some files and permissions
-chmod 760 -R /data 
-chown tpot:tpot -R /data 
-chmod 600 /home/$myuser/.ssh/authorized_keys 
-chown $myuser:$myuser /home/$myuser/.ssh /home/$myuser/.ssh/authorized_keys 
+chmod 760 -R /data
+chown tpot:tpot -R /data
+chmod 600 /home/$myuser/.ssh/authorized_keys
+chown $myuser:$myuser /home/$myuser/.ssh /home/$myuser/.ssh/authorized_keys
 
 # Let's replace "quiet splash" options, set a console font for more screen canvas and update grub
 sed -i 's#GRUB_CMDLINE_LINUX_DEFAULT="quiet splash"#GRUB_CMDLINE_LINUX_DEFAULT="consoleblank=0"#' /etc/default/grub
@@ -471,7 +471,7 @@ cp /usr/share/consolefonts/Uni2-Terminus12x6.psf.gz /etc/console-setup/
 gunzip /etc/console-setup/Uni2-Terminus12x6.psf.gz
 sed -i 's#FONTFACE=".*#FONTFACE="Terminus"#' /etc/default/console-setup
 sed -i 's#FONTSIZE=".*#FONTSIZE="12x6"#' /etc/default/console-setup
-update-initramfs -u 
+update-initramfs -u
 
 # Let's enable a color prompt and add /opt/tpot/bin to path
 myROOTPROMPT='PS1="\[\033[38;5;8m\][\[$(tput sgr0)\]\[\033[38;5;1m\]\u\[$(tput sgr0)\]\[\033[38;5;6m\]@\[$(tput sgr0)\]\[\033[38;5;4m\]\h\[$(tput sgr0)\]\[\033[38;5;6m\]:\[$(tput sgr0)\]\[\033[38;5;5m\]\w\[$(tput sgr0)\]\[\033[38;5;8m\]]\[$(tput sgr0)\]\[\033[38;5;1m\]\\$\[$(tput sgr0)\]\[\033[38;5;15m\] \[$(tput sgr0)\]"'
