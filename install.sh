@@ -302,10 +302,8 @@ fuECHO "### If you are unsure you can use the default values."
 mkdir -p /etc/nginx/ssl
 openssl req -nodes -x509 -sha512 -newkey rsa:8192 -keyout "/etc/nginx/ssl/nginx.key" -out "/etc/nginx/ssl/nginx.crt" -days 3650  -subj '/C=AU/ST=Some-State/O=Internet Widgits Pty Ltd'
 
-# Installing docker-compose, wetty, ctop, elasticdump, tpot
+# Installing wetty, ctop, elasticdump, tpot
 pip install --upgrade pip
-#fuECHO "### Installing docker-compose."
-#pip install docker-compose==1.16.1
 fuECHO "### Installing elasticsearch curator."
 pip install elasticsearch-curator==5.4.1
 fuECHO "### Installing wetty."
@@ -314,7 +312,7 @@ npm install https://github.com/t3chn0m4g3/wetty -g
 fuECHO "### Installing elasticsearch-dump."
 npm install https://github.com/taskrabbit/elasticsearch-dump#ac9f62a -g
 fuECHO "### Installing ctop."
-wget https://github.com/bcicen/ctop/releases/download/v0.7/ctop-0.7-linux-amd64 -O ctop 
+wget https://github.com/bcicen/ctop/releases/download/v0.7/ctop-0.7-linux-amd64 -O ctop
 mv ctop /usr/bin/
 chmod +x /usr/bin/ctop
 fuECHO "### Cloning T-Pot."
