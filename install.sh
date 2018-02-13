@@ -145,9 +145,9 @@ if ! fgrep -q "PubkeyAuthentication yes" /etc/ssh/sshd_config
 		exit 1
 fi
 
-# check for ubuntu 16.04. distribution
+# check for ubuntu 18.04. distribution
 release=$(lsb_release -r|cut -d $'\t' -f2)
-if [ $release != "16.04" ]
+if [ $release != "18.04" ]
     then
         fuECHO "### Wrong distribution. Must be Ubuntu 16.04.*. Script will abort! "
         exit 1
@@ -245,7 +245,7 @@ apt-get upgrade -y
 
 # Install packages needed
 
-apt-get install apache2-utils apparmor apt-transport-https aufs-tools bash-completion build-essential ca-certificates cgroupfs-mount curl dialog dnsutils docker.io dstat ethtool genisoimage git glances html2text htop iptables iw jq libcrack2 libltdl7 lm-sensors man nginx-extras nodejs npm ntp openssh-server openssl prips syslinux psmisc pv python-pip unzip vim -y 
+apt-get install apache2-utils apparmor apt-transport-https aufs-tools bash-completion build-essential ca-certificates cgroupfs-mount curl dialog dnsutils docker.io docker-compose dstat ethtool genisoimage git glances html2text htop iptables iw jq libcrack2 libltdl7 libnginx-mod-http-headers-more-filter lm-sensors man nginx-extras nodejs npm ntp openssh-server openssl prips syslinux psmisc pv python-pip unzip vim -y 
 
 # Let's clean up apt
 apt-get autoclean -y
@@ -304,10 +304,10 @@ openssl req -nodes -x509 -sha512 -newkey rsa:8192 -keyout "/etc/nginx/ssl/nginx.
 
 # Installing docker-compose, wetty, ctop, elasticdump, tpot
 pip install --upgrade pip
-fuECHO "### Installing docker-compose."
-pip install docker-compose==1.16.1 
+#fuECHO "### Installing docker-compose."
+#pip install docker-compose==1.16.1 
 fuECHO "### Installing elasticsearch curator."
-pip install elasticsearch-curator==5.2.0
+pip install elasticsearch-curator==5.4.1
 fuECHO "### Installing wetty."
 [ ! -e /usr/bin/node ] && ln -s /usr/bin/nodejs /usr/bin/node 
 npm install https://github.com/t3chn0m4g3/wetty -g 
@@ -318,7 +318,7 @@ wget https://github.com/bcicen/ctop/releases/download/v0.6.1/ctop-0.6.1-linux-am
 mv ctop /usr/bin/
 chmod +x /usr/bin/ctop
 fuECHO "### Cloning T-Pot."
-git clone https://github.com/dtag-dev-sec/tpotce /opt/tpot
+git clone https://github.com/dtag-dev-sec/tpotce -b 18.04 /opt/tpot
 
 # Let's add a new user
 fuECHO "### Adding new user."
@@ -336,7 +336,7 @@ sed -i 's#127.0.1.1.*#127.0.1.1\t'"$myHOST"'#g' /etc/hosts
 
 # Let's patch sshd_config
 fuECHO "### Patching sshd_config to listen on port 64295 and deny password authentication."
-sed -i 's#Port 22#Port 64295#' /etc/ssh/sshd_config
+sed -i 's#\#Port 22#Port 64295#' /etc/ssh/sshd_config
 sed -i 's#\#PasswordAuthentication yes#PasswordAuthentication no#' /etc/ssh/sshd_config
 
 # Let's allow ssh password authentication from RFC1918 networks
