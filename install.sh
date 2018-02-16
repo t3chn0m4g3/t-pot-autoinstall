@@ -1,14 +1,13 @@
 #!/bin/bash
 ##########################################################
-# T-Pot 17.10 install script                             #
-# Ubuntu server 16.04.0x, x64                            #
+# T-Pot 18.04 install script                             #
+# Ubuntu server 18.04.x, x64                             #
 #                                                        #
 # v1.2 by av, DTAG 2017-11-13                            #
 #                                                        #
-# based on T-Pot 17.10 Community Edition Script          #
-# v17.10.0 by mo, DTAG, 2016-10-19                       #
+# based on T-Pot 18.04 Community Edition Script          #
+# v18.04.0 by mo, DTAG, 2018-02-16                       #
 ##########################################################
-
 
 # Let's create a function for colorful output
 fuECHO () {
@@ -23,7 +22,6 @@ tput setaf $myWHT
 myTPOTCOMPOSE="/opt/tpot/etc/tpot.yml"
 cwdir=$(pwd)
 
-
 # used for hostname
 fuRANDOMWORD () {
   local myWORDFILE="$1"
@@ -33,12 +31,11 @@ fuRANDOMWORD () {
   echo -n $(sed -n "$myNUM p" $myWORDFILE | tr -d \' | tr A-Z a-z)
 }
 
-
 fuECHO ""
 echo "
 ##########################################################
-# T-Pot 17.10 install script                             #
-# for Ubuntu server 16.04.0x, x64                        #
+# T-Pot 18.04 install script                             #
+# for Ubuntu server 18.04.x, x64                         #
 ##########################################################
 Make sure the key-based SSH login for your normal user is working!
 "
@@ -149,7 +146,7 @@ fi
 release=$(lsb_release -r|cut -d $'\t' -f2)
 if [ $release != "18.04" ]
     then
-        fuECHO "### Wrong distribution. Must be Ubuntu 16.04.*. Script will abort! "
+        fuECHO "### Wrong distribution. Must be Ubuntu 18.04.*. Script will abort! "
         exit 1
 fi
 
@@ -245,17 +242,11 @@ apt-get upgrade -y
 
 # Install packages needed
 
-apt-get install apache2-utils apparmor apt-transport-https aufs-tools bash-completion build-essential ca-certificates cgroupfs-mount curl dialog dnsutils docker.io docker-compose dstat ethtool genisoimage git glances html2text htop iptables iw jq libcrack2 libltdl7 libnginx-mod-http-headers-more-filter lm-sensors man nginx-extras nodejs npm ntp openssh-server openssl prips syslinux psmisc pv python-pip unzip vim -y
+apt-get install apache2-utils apparmor apt-transport-https aufs-tools bash-completion build-essential ca-certificates cgroupfs-mount curl dialog dnsutils docker.io docker-compose dstat ethtool genisoimage git glances html2text htop iptables iw jq libcrack2 libltdl7 lm-sensors man nodejs npm ntp openssh-server openssl prips syslinux psmisc pv python-pip unzip vim -y
 
 # Let's clean up apt
 apt-get autoclean -y
 apt-get autoremove -y
-
-# Let's remove NGINX default website
-fuECHO "### Removing NGINX default website."
-[ -e /etc/nginx/sites-enabled ] && rm /etc/nginx/sites-enabled/default
-[ -e /etc/nginx/sites-avaliable ] && rm /etc/nginx/sites-available/default
-[ -e /usr/share/nginx/html/index.html ] && rm /usr/share/nginx/html/index.html
 
 if [ -z ${noninteractive+x} ]; then
 	# Let's ask user for a password for the web user
@@ -284,7 +275,8 @@ else
 	myUSER=$myusergiven
 	myPASS1=$mypasswordgiven
 fi
-htpasswd -b -c /etc/nginx/nginxpasswd $myUSER $myPASS1
+mkdir -p /data/nginx/conf 2>&1
+htpasswd -b -c /data/nginx/conf/nginxpasswd $myUSER $myPASS1
 fuECHO
 
 # Let's modify the sources list
@@ -299,8 +291,8 @@ EOF
 # Let's generate a SSL certificate
 fuECHO "### Generating a self-signed-certificate for NGINX."
 fuECHO "### If you are unsure you can use the default values."
-mkdir -p /etc/nginx/ssl
-openssl req -nodes -x509 -sha512 -newkey rsa:8192 -keyout "/etc/nginx/ssl/nginx.key" -out "/etc/nginx/ssl/nginx.crt" -days 3650  -subj '/C=AU/ST=Some-State/O=Internet Widgits Pty Ltd'
+mkdir -p /data/nginx/cert
+openssl req -nodes -x509 -sha512 -newkey rsa:8192 -keyout "/data/nginx/cert/nginx.key" -out "/data/nginx/cert/nginx.crt" -days 3650  -subj '/C=AU/ST=Some-State/O=Internet Widgits Pty Ltd'
 
 # Installing wetty, ctop, elasticdump, tpot
 pip install --upgrade pip
@@ -425,6 +417,7 @@ mkdir -p /data/conpot/log \
          /data/elk/data /data/elk/log \
          /data/glastopf /data/honeytrap/log/ /data/honeytrap/attacks/ /data/honeytrap/downloads/ \
          /data/mailoney/log \
+	 /data/nginx/log \
          /data/emobility/log \
          /data/ews/conf \
          /data/rdpy/log \
@@ -438,10 +431,6 @@ touch /data/spiderfoot/spiderfoot.db
 tar xvfz /opt/tpot/etc/objects/elkbase.tgz -C /
 cp    /opt/tpot/host/etc/systemd/* /etc/systemd/system/
 cp    /opt/tpot/host/etc/issue /etc/
-cp -R /opt/tpot/host/etc/nginx/ssl /etc/nginx/
-cp    /opt/tpot/host/etc/nginx/tpotweb.conf /etc/nginx/sites-available/
-cp    /opt/tpot/host/etc/nginx/nginx.conf /etc/nginx/nginx.conf
-cp    /opt/tpot/host/usr/share/nginx/html/* /usr/share/nginx/html/
 systemctl enable tpot
 systemctl enable wetty
 
@@ -452,12 +441,11 @@ sed -e 's:tsec:'$myuser':g' -i /etc/systemd/system/wetty.service
 sed -e 's:tsec:'$myuser':g' -i /usr/share/nginx/html/navbar.html
 
 
-# Let's enable T-Pot website
-ln -s /etc/nginx/sites-available/tpotweb.conf /etc/nginx/sites-enabled/tpotweb.conf
-
 # Let's take care of some files and permissions
 chmod 760 -R /data
 chown tpot:tpot -R /data
+chmod 644 -R /data/nginx/conf
+chmod 644 -R /data/nginx/cert
 chmod 600 /home/$myuser/.ssh/authorized_keys
 chown $myuser:$myuser /home/$myuser/.ssh /home/$myuser/.ssh/authorized_keys
 
