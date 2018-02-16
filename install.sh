@@ -438,7 +438,7 @@ systemctl enable wetty
 sed -e 's:tsec:'$myuser':g' -i /etc/systemd/system/wetty.service
 
 # patch html navbar
-sed -e 's:tsec:'$myuser':g' -i /usr/share/nginx/html/navbar.html
+# sed -e 's:tsec:'$myuser':g' -i /usr/share/nginx/html/navbar.html
 
 
 # Let's take care of some files and permissions
