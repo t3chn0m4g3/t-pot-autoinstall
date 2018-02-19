@@ -43,32 +43,32 @@ Make sure the key-based SSH login for your normal user is working!
 # ADD ARGS for automated setup
 if [ "$#" -ne 3 -a  "$#" -gt 0 ]; then
 	echo "## Please add the following three arguments for a one shot install:"
-    echo "         Username, which edition to install (number), a webpassword"
-    echo "## invoke: $0 myusername <1|2|3|4> myWebPassw0rd"
-    echo ""
-    echo "## Editions to choose from: "
-    echo "##########################################################"
-	echo "#                                                        #"
-	echo "#     How do you want to proceed? Enter your choice.     #"
-	echo "#                                                        #"
-	echo "#     Required: 4GB RAM, 64GB disk                       #"
-	echo "#     Recommended: 8GB RAM, 128GB SSD                    #"
-	echo "#                                                        #"
-	echo "# 1 - T-Pot's STANDARD INSTALLATION                      #"
-	echo "#     Standard Honeypots, Suricata & ELK                 #"
-	echo "#                                                        #"
-	echo "# 2 - T-Pot's HONEYPOTS ONLY                             #"
-	echo "#     Honeypots only, w/o Suricata & ELK                 #"
-	echo "#                                                        #"
-	echo "# 3 - T-Pot's INDUSTRIAL EDITION                         #"
-	echo "#     Conpot, eMobility, Suricata & ELK                  #"
-	echo "#                                                        #"
-	echo "# 4 - T-Pot's FULL INSTALLATION                          #"
-	echo "#     Everything                                         #"
-	echo "#                                                        #"
-	echo "##########################################################"
-	echo ""
-    echo "## EXITING"
+    	echo "         Username, which edition to install (number), a webpassword"
+    	echo "## invoke: $0 myusername <1|2|3|4> myWebPassw0rd"
+    	echo ""
+    	echo "## Editions to choose from: "
+    	echo "##########################################################"
+    	echo "#                                                        #"
+    	echo "#     How do you want to proceed? Enter your choice.     #"
+    	echo "#                                                        #"
+    	echo "#     Required: 4GB RAM, 64GB disk                       #"
+    	echo "#     Recommended: 8GB RAM, 128GB SSD                    #"
+    	echo "#                                                        #"
+    	echo "# 1 - T-Pot's STANDARD INSTALLATION                      #"
+    	echo "#     Standard Honeypots, Suricata & ELK                 #"
+    	echo "#                                                        #"
+    	echo "# 2 - T-Pot's HONEYPOTS ONLY                             #"
+    	echo "#     Honeypots only, w/o Suricata & ELK                 #"
+    	echo "#                                                        #"
+    	echo "# 3 - T-Pot's INDUSTRIAL EDITION                         #"
+    	echo "#     Conpot, eMobility, Suricata & ELK                  #"
+    	echo "#                                                        #"
+    	echo "# 4 - T-Pot's FULL INSTALLATION                          #"
+    	echo "#     Everything                                         #"
+    	echo "#                                                        #"
+    	echo "##########################################################"
+    	echo ""
+    	echo "## EXITING"
     exit 1
 fi
 
@@ -106,8 +106,8 @@ echo "Checking prerequisites..."
 
 # check if user exists
 if ! grep -q $myuser /etc/passwd
-	then
-		fuECHO "### User '$myuser' not found. Script will abort!"
+    then
+	fuECHO "### User '$myuser' not found. Script will abort!"
         exit 1
 fi
 
@@ -115,9 +115,9 @@ fi
 # check if ssh daemon is running
 sshstatus=$(service ssh status)
 if [[ ! $sshstatus =~ "active (running)" ]];
-	then
-		echo "### SSH is not running. Script will abort!"
-		exit 1
+    then
+	echo "### SSH is not running. Script will abort!"
+	exit 1
 fi
 
 # check for available, non-empty SSH key
@@ -137,9 +137,9 @@ fi
 
 # check if pubkey authentication is active
 if ! fgrep -q "PubkeyAuthentication yes" /etc/ssh/sshd_config
-	then
-		fuECHO "### Public Key Authentication is disabled /etc/ssh/sshd_config. \n ### Enable it by changing PubkeyAuthentication to 'yes'."
-		exit 1
+    then
+	fuECHO "### Public Key Authentication is disabled /etc/ssh/sshd_config. \n ### Enable it by changing PubkeyAuthentication to 'yes'."
+	exit 1
 fi
 
 # check for ubuntu 18.04. distribution
@@ -152,7 +152,7 @@ fi
 
 # Let's make sure there is a warning if running for a second time
 if [ -f install.log ];
-  then
+    then
         fuECHO "### Running more than once may complicate things. Erase install.log if you are really sure."
         exit 1
 fi
@@ -161,17 +161,14 @@ fi
 locale-gen "en_US.UTF-8"
 export LC_ALL="en_US.UTF-8"
 
-
 # Let's log for the beauty of it
 set -e
 exec 2> >(tee "install.err")
 exec > >(tee "install.log")
 
-
 echo "Everything looks OK..."
 echo ""
 clear
-
 
 if [ -z ${noninteractive+x} ]; then
 	echo "##########################################################"
@@ -230,8 +227,6 @@ case $choice in
 	exit 1
 	;;
 esac
-
-
 # End checks
 
 # Let's pull some updates
@@ -241,8 +236,7 @@ fuECHO "### Installing Updates."
 apt-get upgrade -y
 
 # Install packages needed
-
-apt-get install apache2-utils apparmor apt-transport-https aufs-tools bash-completion build-essential ca-certificates cgroupfs-mount curl dialog dnsutils docker.io docker-compose dstat ethtool genisoimage git glances html2text htop iptables iw jq libcrack2 libltdl7 lm-sensors man nodejs npm ntp openssh-server openssl prips syslinux psmisc pv python-pip unzip vim -y
+apt-get install apache2-utils apparmor apt-transport-https aufs-tools bash-completion build-essential ca-certificates cgroupfs-mount curl dialog dnsutils docker.io docker-compose dstat ethtool genisoimage git glances html2text htop iptables iw jq libcrack2 libltdl7 lm-sensors man ntp openssh-server openssl prips syslinux psmisc pv python-pip unzip vim -y
 
 # Let's clean up apt
 apt-get autoclean -y
@@ -294,13 +288,10 @@ fuECHO "### If you are unsure you can use the default values."
 mkdir -p /data/nginx/cert
 openssl req -nodes -x509 -sha512 -newkey rsa:8192 -keyout "/data/nginx/cert/nginx.key" -out "/data/nginx/cert/nginx.crt" -days 3650  -subj '/C=AU/ST=Some-State/O=Internet Widgits Pty Ltd'
 
-# Installing wetty, ctop, elasticdump, tpot
+# Installing ctop, elasticdump, tpot
 pip install --upgrade pip
 fuECHO "### Installing elasticsearch curator."
 pip install elasticsearch-curator==5.4.1
-fuECHO "### Installing wetty."
-[ ! -e /usr/bin/node ] && ln -s /usr/bin/nodejs /usr/bin/node
-npm install https://github.com/t3chn0m4g3/wetty -g
 fuECHO "### Installing elasticsearch-dump."
 npm install https://github.com/taskrabbit/elasticsearch-dump#ac9f62a -g
 fuECHO "### Installing ctop."
@@ -315,14 +306,12 @@ fuECHO "### Adding new user."
 addgroup --gid 2000 tpot
 adduser --system --no-create-home --uid 2000 --disabled-password --disabled-login --gid 2000 tpot
 
-
 # Let's set the hostname
 a=$(fuRANDOMWORD /opt/tpot/host/usr/share/dict/a.txt)
 n=$(fuRANDOMWORD /opt/tpot/host/usr/share/dict/n.txt)
 myHOST=$a$n
 hostnamectl set-hostname $myHOST
 sed -i 's#127.0.1.1.*#127.0.1.1\t'"$myHOST"'#g' /etc/hosts
-
 
 # Let's patch sshd_config
 fuECHO "### Patching sshd_config to listen on port 64295 and deny password authentication."
@@ -360,7 +349,6 @@ case $mode in
   ;;
 esac
 
-
 # Let's load docker images
 myIMAGESCOUNT=$(cat $myTPOTCOMPOSE | grep -v '#' | grep image | cut -d: -f2 | wc -l)
 j=0
@@ -391,7 +379,6 @@ net.ipv6.conf.all.disable_ipv6 = 1
 net.ipv6.conf.default.disable_ipv6 = 1
 net.ipv6.conf.lo.disable_ipv6 = 1
 EOF
-
 
 # Let's add some conrjobs
 fuECHO "### Adding cronjobs."
@@ -434,13 +421,6 @@ cp    /opt/tpot/host/etc/issue /etc/
 systemctl enable tpot
 systemctl enable wetty
 
-# patch wetty config
-sed -e 's:tsec:'$myuser':g' -i /etc/systemd/system/wetty.service
-
-# patch html navbar
-# sed -e 's:tsec:'$myuser':g' -i /usr/share/nginx/html/navbar.html
-
-
 # Let's take care of some files and permissions
 chmod 760 -R /data
 chown tpot:tpot -R /data
@@ -473,7 +453,6 @@ EOF
 
 # Let's create ews.ip before reboot and prevent race condition for first start
 /opt/tpot/bin/updateip.sh
-
 
 # Final steps
 fuECHO "### Thanks for your patience. Now rebooting. Remember to login on SSH port 64295 next time or visit the dashboard on port 64297!"
