@@ -419,7 +419,6 @@ tar xvfz /opt/tpot/etc/objects/elkbase.tgz -C /
 cp    /opt/tpot/host/etc/systemd/* /etc/systemd/system/
 cp    /opt/tpot/host/etc/issue /etc/
 systemctl enable tpot
-systemctl enable wetty
 
 # Let's take care of some files and permissions
 chmod 760 -R /data
