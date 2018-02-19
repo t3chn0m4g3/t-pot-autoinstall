@@ -236,7 +236,7 @@ fuECHO "### Installing Updates."
 apt-get upgrade -y
 
 # Install packages needed
-apt-get install apache2-utils apparmor apt-transport-https aufs-tools bash-completion build-essential ca-certificates cgroupfs-mount curl dialog dnsutils docker.io docker-compose dstat ethtool genisoimage git glances html2text htop iptables iw jq libcrack2 libltdl7 lm-sensors man ntp openssh-server openssl prips syslinux psmisc pv python-pip unzip vim -y
+apt-get install apache2-utils apparmor apt-transport-https aufs-tools bash-completion build-essential ca-certificates cgroupfs-mount curl dialog dnsutils docker.io docker-compose dstat ethtool genisoimage git glances html2text htop iptables iw jq libcrack2 libltdl7 lm-sensors man npm ntp openssh-server openssl prips syslinux psmisc pv python-pip unzip vim -y
 
 # Let's clean up apt
 apt-get autoclean -y
